@@ -20,21 +20,35 @@ File.write("output.txt", contents)
 puts contents['MatchDetails']['Map']
 puts
 
-array = contents['UserDetails']
-# Filter non-participants
-array = array.reject { |x| x["Team"].nil? }
-array = array.reject { |x| x["Damage"] == 0 }
-array = array.reject { |x| x["Team"] == "2" }
 
-# order
-array = array.sort_by {|x| x["HealthPercentage"]}
+def health_remainders(contents, team_num)
+  array = contents['UserDetails']
+  # Filter non-participants
+  array = array.reject { |x| x["Team"].nil? }
+  array = array.reject { |x| x["Damage"] == 0 }
+  array = array.reject { |x| x["Team"] == "#{team_num}" }
+
+  # order
+  array = array.sort_by {|x| x["HealthPercentage"]}
 
 
-# array = array.collect { |x| [ x["Team"], x["Username"], x["TeamDamage"], x["HealthPercentage"] ] }
+  # array = array.collect { |x| [ x["Team"], x["Username"], x["TeamDamage"], x["HealthPercentage"] ] }
 
-# View
-array = array.map { |x| [ "#{x['Username']}\n  [#{x['MechName']}]\n  dmg: #{x['Damage']}\n  Remaining HP: #{x['HealthPercentage']}%" ] }
+  # View
+  array = array.map { |x| [ "#{x['Username']}\n  [#{x['MechName']}]\n  dmg: #{x['Damage']}\n  Remaining HP: #{x['HealthPercentage']}%" ] }
 
-File.open("remainder.txt", "w") do |f|
-  f.puts array
+
+  File.open("remainder.txt", "a") do |f|
+    f.puts "#{contents['MatchDetails']['Map']} Health Remainders"
+
+    f.puts "Team #{team_num}"
+    f.puts
+    f.puts array
+    f.puts "\n\n"
+  end
 end
+
+File.open("remainder.txt", "w") { |f| f.puts }
+
+health_remainders(contents, 2)
+health_remainders(contents, 1)
