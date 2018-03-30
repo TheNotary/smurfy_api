@@ -38,17 +38,25 @@ def health_remainders(contents, team_num)
   array = array.map { |x| [ "#{x['Username']}\n  [#{x['MechName']}]\n  dmg: #{x['Damage']}\n  Remaining HP: #{x['HealthPercentage']}%" ] }
 
 
-  File.open("remainder.txt", "a") do |f|
+  file = StringIO.new('', 'a') do |f|
     f.puts "#{contents['MatchDetails']['Map']} Health Remainders"
 
     f.puts "Team #{team_num}"
     f.puts
     f.puts array
     f.puts "\n\n"
-  end
+  end.string
+
+  puts file
+
+  file
 end
 
-File.open("remainder.txt", "w") { |f| f.puts }
 
-health_remainders(contents, 2)
-health_remainders(contents, 1)
+remainder = ""
+remainder += health_remainders(contents, 2)
+remainder += health_remainders(contents, 1)
+
+puts remainder
+
+File.open("remainder.txt", "w") { |f| f.puts remainder }
